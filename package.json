@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aoi.js": "^3.0.0",
+    "aoi.js": "^4.4.4",
+    "canvacord": "^5.2.1",
     "dbd.express": "^1.0.1",
     "dbd.js": "^3.0.6",
+    "discord-canvas": "^1.4.1",
     "express": "^4.17.1"
   }
 }

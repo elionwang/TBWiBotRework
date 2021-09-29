@@ -1,14 +1,11 @@
-const dbd = require("dbd.js")
-
-const keepAlive = require('./server.js')
+           const keepAlive = require('./server.js')
  
+const aoijs = require("aoi.js")
 
-const dbdExpress = require("dbd.express")
-const dbdjs = require("dbd.js")
-
-const bot = new dbdjs.Bot({
-   token: "Nzc1Njg3MTc0OTgwMzcwNDM0.X6p8-g.SCzlpV_e_QbZzjx4ZKZnI-28ORY",
-  prefix: ["$getServerVar[prefix]", "<@!775687174980370434>"]
+const bot = new aoijs.Bot({
+  token: process.env.TOKEN,
+  prefix: ["$getServerVar[prefix]", "<@!775687174980370434>"],
+  revertReading: true
 })
 
 bot.botJoinCommand({
@@ -21,14 +18,6 @@ $color[FFD700]`
 })
 
 bot.onGuildJoin()
-
-bot.readyCommand({
-channel: "785506848638763039",
-code: `$title[Bot opgestart]
-$description[Het opstarten was succesvol!]
-$addTimestamp
-$color[FFD700]`
-})
 
 bot.variables({
     Check: "on",
@@ -221,275 +210,9 @@ message.channel.send(embed);
  
 bot.onJoined()
 
-bot.leaveCommand({
-  channel: "773126566414385166", 
-  code: `$author[$username#$discriminator[$authorID];$serverIcon]
-$description[👋 | **$username#$discriminator[$authorID]** is *$serverName* geleaved! 😢]
-$thumbnail[$authorAvatar]
-$footer[Er zijn nog $membersCount members over.]
-$color[FFD700]`
-})
-
 bot.onLeave()
 
-bot.command({
-name: "joinchannel",
-description: "Stelt de join channel in.",
-usage: "+joinchannel <channel>",
-code: `$setServerVar[joinchannel;$mentionedChannels[1;yes]]
-$title[Join Channel Setup]
-$description[Ik heb de join channel gezet naar **<#$mentionedChannels[1;yes]>**!]
-$color[FFD700]
-$addTimestamp
-$onlyPerms[admin;{color:RED} {description:Je hebt geen rechten om deze command uit te voeren!}]`
-})
-
 bot.onMessage()
-
-bot.command({
-name: "ping", 
-description: "Geeft de bots ping aan in ms.",
-usage: "+ping",
-code: `$title[🏓**Ping!**]
-$description[🏓**Pong! $ping ms**]
-$footer[$authorID]
-$color[RANDOM]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]` 
-})
-
-bot.command({
-name: "ban", 
-description: "Bant de genoemde persoon.",
-usage: "+ban <user> <reden>",
-code: `$ban[$findUser[$message[1]];$noMentionMessage]
-$title[Ban]
-$color[FFD700]
-$thumbnail[$userAvatar[$mentioned[1]]]
-$description[**Geband: <@!$findUser[$message[1]]>
-Geband door: <@!$authorID>
-Reden: $noMentionMessage**] 
-$addTimestamp
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$onlyIf[$isBanned[$mentioned[1]]==false;Deze user is al gebanned!]
-$onlyIf[$mentioned[1]!=$authorID;{color;RED} {description:Je kan jezelf niet bannen!}]
-$onlyIf[$mentioned[1]!=$clientID;{color:RED} {description:Je kan de bot niet bannen!}]
-$onlyIf[$userExists[$message[1]]==true;{color:RED} {description:Dat is geen geldige user om te bannen!}]
-$onlyPerms[ban;{color:RED} {description:Je hebt geen rechten om deze command uit te voeren!}]`
-})
-
-bot.command({
-name: "unban", 
-description: "Unbant de genoemde persoon.",
-usage: "+unban <user> <reden>",
-code: `$unban[$findUser[$message[1]];$noMentionMessage]
-$title[Unban]
-$color[3348a1]
-$description[**Geunbanned: <@!$message>
-Geunbanned door: <@!$authorID>**]
-$argsCheck[<2;**Hey, Je moet de naam neerzetten van degene die je wil unbannen!**]
-$onlyPerms[ban;Je hebt geen rechten om deze command uit te voeren!]
-$addTimestamp
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$onlyIf[$isBanned[$findUser[$message[1]]]==true;Deze user is niet gebanned!]
-$onlyIf[$userExists[$message[1]]==true;Dat is geen geldige user om te unbannen!]`
-})
-
-bot.command({
-name: "bsprorate", 
-description: "Geeft een willekeurig percentage van 0 tot 100% van hoe pro de genoemde persoon is in Brawl Stars.",
-usage: "+bsprorate <user> of +bsprorate",
-code: `$title[Brawl Stars Pro Rate]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770292749714849842/image0.png]
-$description[$username[$mentioned[1;yes]] is $random[0;100]% Pro😎]
-$color[RANDOM]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]` 
-})
-
-bot.command({
-name: "unmute", 
-description: "Unmute de genoemde persoon.",
-usage: "+unmute <user>",
-code: `$takeRoles[$mentioned[1];$roleID[Muted]]
-$title[**Unmute**]
-$color[FFD700]
-$thumbnail[$userAvatar[$findUser[$message[1]]]]
-$footer[Unmuted door $username.]
-$description[
-
-Unmuted: <@!$findUser[$message[1]]>
-Unmuted door: <@!$authorID>
-]
-$addTimestamp
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$argsCheck[>1;Mention iemand om hem te unmuten.]
-$onlyPerms[manageroles;:x: Je hebt geen rechten om deze command uit te voeren!]
-$onlyIf[$hasRole[$findUser[$message[1]];$roleID[Muted]]==true;{title:Error} {description:Deze user is niet gemute!} {color:RED}]
-$onlyIf[$roleExists[$roleID[Muted]]==true;{title:Error} {description:Er is geen muted role!} {color:RED}]` 
-})
-
-bot.command({
-name: "mute", 
-description: "Mute de genoemde persoon.",
-usage: "+mute <user> <reden>",
-code: `$giveRoles[$mentioned[1;yes];$roleID[Muted]]
-$title[**Mute**]
-$thumbnail[$userAvatar[$findUser[$message[1]]]]
-$description[
-
-Gemute: <@!$mentioned[1;yes]>
-Gemute door: <@!$authorID>
-Reden: __**$noMentionMessage**__
-]
-$footer[Gemute door $username.]
-$addTimestamp
-$color[FFD700]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$argsCheck[>2;{color:RED} {description:Verkeerd gebruik! Gebruik \`$getServerVar[prefix]mute <user> <reden>\`}]
-$onlyPerms[manageroles;:x: Je hebt geen rechten om deze command uit te voeren!]
-$onlyIf[$hasRole[$mentioned[1;yes];$roleID[Muted]]==false;{title:Error} {description:Deze user is al gemute!} {color:RED}]
-$onlyIf[$roleExists[$roleID[Muted]]==true;{title:Error} {description:Er is geen muted role!} {color:RED}]` 
-})
-
-bot.command({
-name: "server-info", 
-description: "Geeft info van deze server.",
-usage: "+server-info",
-code: `$title[Server Info]
-$thumbnail[$serverIcon]
-$description[**Info:**
-**Regio:** $serverRegion
-**Aantal kanalen:** $channelCount
-**Owner: <@!$ownerID>**
-**Aantal Emojis:** $emojiCount
-**Members:** $membersCount
-**Aantal roles:** $roleCount
-**Verificatie:** $serverVerificationLevel]
-$color[FFD700]` 
-})
-
-bot.command({
-name: "kick",
-description: "Kickt de genoemde persoon.",
-usage: "+kick <user> <reden>",
-code: `$kick[$mentioned[1];$noMentionMessage]
-$title[Kick]
-$description[**Gekickt: <@!$mentioned[1;yes]>
-Gekickt door: <@!$authorID>
-Reden: $noMentionMessage**] 
-$argsCheck[<3;**Hey, Je moet de naam neerzetten van degene die je wil kicken en je moet een reden geven!**]
-$addTimestamp
-$color[FFD700]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$argsCheck[>1;{color:RED} {description:Verkeerd gebruik! Gebruik \`$commandInfo[usage]\`}]
-$onlyPerms[ban;kick;manageserver;managemessages;Je hebt geen rechten om deze command uit te voeren!]` 
-})
-          
-bot.command({
-name: "nickname",
-aliases: ["nick"],
-description: "Geeft de genoemde persoon een nickname.",
-usage: "+nickname <user>",
-code: `$changeNickname[$mentioned[1];$noMentionMessage]
-$author[Nickname wijziging;https://media.discordapp.net/attachments/773126566414385166/780766670704083024/image0.png]
-$description[Nickname van <@!$mentioned[1]> met succes gewijzigd naar $noMentionMessage!]
-$color[FFD700]
-$addTimestamp
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$onlyPerms[admin;Je hebt geen rechten om deze command uit te voeren!]` 
-})
-
-bot.command({
-name: "uptime",
-description: "Geeft de bots uptime.",
-usage: "+uptime",
-code: `$title[**Uptime**]
-$description[⏱ **De bot's uptime is $uptime!**
-]
-$color[RANDOM]` 
-})
-
-bot.command({
-name: "rps-rock",
-description: "Kiest rock om tegen de bot te spelen in Rock Paper Scissors.",
-usage: "+rps-rock",
-code: `$title[Rock, Paper, Scissors]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770304478947573770/image0.jpg]
-$description[De bot kiest $randomText[**Rock**, gelijkspel!;**Paper**, Get Gud.;**Scissors**, GG!]
-]
-$color[RANDOM]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]` 
-})
-
-bot.command({
-name: "rps-paper",
-description: "Kiest paper om tegen de bot te spelen in Rock Paper Scissors.",
-usage: "+rps-paper",
-code: `$title[Rock, Paper, Scissors]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770304478947573770/image0.jpg]
-$description[
-$randomText[De bot kiest **Rock**, GG!;De bot kiest **Paper**, gelijkspel!;De bot kiest **Scissors**, Get Gud.]
-]
-$color[RANDOM]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]` 
-})
-
-bot.command({
-name: "rps-scissors", 
-description: "Kiest scissors om tegen de bot te spelen in Rock Paper Scissors.",
-usage: "+rps-scissors",
-code: `$title[Rock, Paper, Scissors]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770304478947573770/image0.jpg]
-$description[
-$randomText[De bot kiest **Rock**, Get Gud.;De bot kiest **Paper**, GG!;De bot kiest **Scissors**, gelijkspel!]
-]
-$color[RANDOM]
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]` 
-})
-
-bot.command({
-name: "suggest",
-description: "Stuurt een suggestie.",
-usage: "+suggest <suggestie>",
-code: `$deletecommand
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770306265900384366/image0.jpg]
-$useChannel[773126566414385166]
-$description[$noMentionMessage]
-$title[Nieuwe Suggestie!]
-$footer[Suggestie van $username#$discriminator[$authorID];$authorAvatar]
-$addReactions[✅;❌]
-$color[FFD700]
-$addTimestamp` 
-})
-
-bot.command({
-name: "randompick", 
-description: "De bot kiest een random brawler en random map voor je.",
-usage: "+randompick",
-code: `$title[Random Pick]
-$description[**Speel...** $randomText[8-Bit;Bo;Brock;Bull;Colt;Dynamike;Emz;Jessie;Nita;Shelly;Tick;Barley;El Primo;Poco;Rosa;Jacky;Darryl;Rico;Carl;Penny;Piper;Bibi;Nani;Bea;Frank;Pam;Edgar;Max;Mortis;Sprout;Mr.P;Gene;Tara;Byron;Amber;Leon;Crow;Spike;Sandy;Colette;Surge;Gale;Lou;Colonel Ruffs]]
-$footer[Waarom doe je dit jezelf aan;$authorAvatar]
-$color[RANDOM]
-$editIn[3s;{title:Random Pick} {description:**In:** $randomText[Gem Grab;Brawl Ball;Solo SD;Duo SD;Heist;Bounty;Hot Zone;Random Map Maker Submission;Present Plunder;Map Maker Winner;]} {footer:Waarom doe je dit jezelf aan:$authorAvatar} {color:RANDOM}]` 
-})
-
-bot.command({
-name: "report",
-description: "Report de genoemde persoon.",
-usage: "+report <user> <reden>",
-code: `$sendMessage[{title:Report} {description:**Je Report is geregistreerd!**
-We zullen zo snel mogelijk kijken naar je report. Heb alsjeblieft geduld.} {color:FFD700}]
-$useChannel[773126566414385166]
-$argsCheck[<3;Verkeerd gebruik! Probeer -report <User> <Reden>]
-$title[Nieuwe Report]
-$color[FFD700]
-$footer[Report gestuurd door $username[$authorID]#$discriminator[$authorID] ($authorID)]
-$description[**Beschuldigd:** <@!$mentioned[1;yes]>
-**Reporter:** <@!$authorID>
-**Channel:** <#$channelID>
-**Reden:** $noMentionMessage]
-$footer[Report van $username#$discriminator[$authorID]]
-$addTimestamp` 
-})
 
 bot.command({
 name: "iq", 
@@ -531,143 +254,11 @@ $onlyIf[$mentioned[1;yes]==354312844851937282]`
 
 
 bot.command({
-name: "youtube", 
-aliases: ["yt"],
-description: "Zoekt iets op youtube voor je.",
-usage: "+youtube <zoekopdracht>",
-code: `$color[RED]
-$author[YouTube Search;https://media.discordapp.net/attachments/773126566414385166/775302336301236224/image0.png]
-$description[*Youtube zoekresultaat*
-**Je zocht waarschijnlijk naar: $jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;title;]
-Url: [Klik hier\\]($jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;url;])
-Wanneer geüpload: $replaceText[$replaceText[$replaceText[$replaceText[$replaceText[$jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;uploaded;];years;jaar];months;maand(en)];days;dagen;];hours;uur];ago;geleden]
-Duur: $jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;duration;]
-Views: $jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;views;]
-Geüpload door: [$jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;uploader_name;]**\]($jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;uploader_url;])]
-$argsCheck[>2;Hey! Geef een geldige zoekopdracht! Gebruik +youtube <zoekopdracht>.]
-$deletecommand
-$botTyping` 
-})
-
-bot.command({
-name: "discord", 
-aliases: ["dc"],
-code: `$title[DubbelDutch Discord]
-$thumbnail[https://media.discordapp.net/attachments/734373933259685989/770560354153136148/1c42cabaeafd252e42d3d50a67324e09a_be76108008499fa242d8a9b3bbc5a7cd.png]
-$description[[Klik hier voor de DD discord!\\](https://discord.gg/RMC6nAv)]
-$footer[glhf!]
-$addTimestamp
-$color[3348a1]`
-})
-
-
-bot.command({
-name: "profile", 
-code: `$author[Profile van <@$mentioned[1;yes];$userAvatar[$mentioned[1;yes]]]
-$title[**Profile**]
-$thumbnail[$userAvatar[$mentioned[1;yes]]]
-$description[
-**🏷Tag/Username🏷:**
-Nickname: $nickname[$mentioned[1;yes]]
-Username: $username[$mentioned[1;yes]]
-
-**🆔User ID🆔:**
-$mentioned[1;yes]
-
-**🗓Account Creatie🗓:**
-$creationDate[$mentioned[1;yes]]
-
-**👋Member is $serverName gejoind op👋:**
-$memberJoinedDate[$mentioned[1;yes]]
-
-**🔝Hoogste Role🔝:**
-**<@&$highestRole[$mentioned[1;yes]]>**
-
-**👥Rollen👥:**
-$userRoles[$mentioned[1;yes]]]
-$footer[Command gebruikt door: $username#$discriminator[$authorID];$authorAvatar]
-$color[FFD700]`
-})
-
-bot.command({
-name: "hack", 
-code: `$wait[5s]
-$botTyping
-$description[**Gmail ID:
-$randomText[toyrobotpro@gmail.com;theworldendedlol@gmail.com;longstoryshort@gmail.com;welcometohell@gmail.com;binocularzlolol@gmail.com;umnololwth@gmail.com;iamthebestestpro@gmail.com;dontwantmymail@gmail.com;watchoutproplayer@gmail.com;DontMisbehavesoon@gmail.com;youlooklikeanooblmao@gmail.com;poopsmelllikefish@gmail.com;iamthebestestsquadpro@gmail.com;henrypotterlolol@gmail.com;saywhaaaaaaaatloal@gmail.com;whatnostoplol@gmail.com;iamfatughLOLxd@gmail.com;poopdotcom@gmail,com;xraygoboom@gmail.com;ilikeunohomo@gmail.com;justarandomusername@gmail.com;heysistersjamescharles@gmail.com;stopstandingAndWORK@gmail.com;blablablahgooglr@gmail.com;swingswinglikearacket@gmail.com;nasarocketspace@gmail.com;coronavirusisnooblol@gmail.com]
-Password:
-$randomText[selajah;wthgoaway;fyoubruhihavestrongpass;justarandomguylmao321;221080dotcom;randompassword6843686;whydou6283;4220likeasap;fatd1234765;notanoob12345456;101100k4tthisp455w0rdXD;Strongestpassintheuniverse0987654123;wlookatthtcockroach;smeelslikeaZahinhere;7267368633;tY2344109;vscogirloopsksksksksksksk;nahmaniasafefrom0;wowgetrektxdxdlolol;samepasswordsmh;lolasfghjkl;nibidyc4nguessthispassword;lastfightandurded7sad].
-Account Token:
-$randomText[NDA1Nzg3MDk4Nzg0NzI3MDQw.XG03uQ.LKJGQC5rDDMLu8WuidLEMcXSPdU;MTE4NDQyNjQ0NTAxMjk5MjAz.DPM2DQ.vLNMR02Qxb9DJFucGZK1UtTs__s;MTExODY5Nzg4MTY2MzY1MTg0.DPNJew.JJm9E9p8U8HH6HQDrIvkGho7kkWs;MTI3NTU2MTI3MjUxNjI4MDMy.DPNBJg.esi0uGIdy2e121NRF7Jwpwcf5ek]
-Mastercard: $random[1234;9999] $random[1111;9999] $random[2345;9999] $random[2534;9976]
-CVV: $random[100;999]
-Expire Date: $random[1;29] / $random[2021;2026]
-Is User Bot: $randomText[Yes;No]
-User Password:
-$randomText[qwerty;abc123;Dragon12;FootballFan2000;123098;qwertyuiop;TheHolyBible21;TheOneOnly;ImScatMan12]**
-]
-$footer[Congratulations $username[$mentioned[1;yes]] Je bent gehacked]
-$color[RANDOM]` 
-})
-
-bot.command({
-name: "clear", 
-code: `$onlyPerms[admin;❌ Je hebt geen rechten om deze command uit te voeren!]
-$clear[$message]
-$title[Clear]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770649579624333332/image0.png]
-$description[Ik heb $message message(s) verwijderd!]
-$color[FFD700]
-$argsCheck[<2;Je moet een specifiek nummer van berichten die je wil verwijderen aangeven!]
-$deleteIn[5s]
-$deletecommand
-$footer[$message berichten verwijderd door $username#$discriminator[$authorID];$authorAvatar]
-$addTimestamp
-$image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$onlyIf[$isNumber[$message]==true;Typ een geldig nummer!]` 
-})
-
-bot.command({
-name: "avatar", 
-code: `$image[$userAvatar[$mentioned[1;yes]]]
-$argsCheck[>2;Mention iemand.]
-$title[**Avatar**]
-$color[FFD700]
-$footer[Command uitgevoerd door $username#$discriminator[$authorID]]
-$addTimestamp` 
-})
-
-bot.command({
-name: "distort", 
-code: `$argsCheck[<2;Mention iemand om zijn/haar profielfoto beter te maken!]
-$thumbnail[https://media.discordapp.net/attachments/756098390424682509/770704939915804733/image0.png]
-$title[**Je profielfoto maar beter**]
-$image[https://api.alexflipnote.dev/filter/magik?image=$userAvatar[$mentioned[1;yes]]]
-$color[RANDOM]
-$footer[Beste profielfoto ooit]
-$addTimestamp
-$onlyIf[$mentioned[1;yes]!=;Mention iemand!]` 
-})
-
-bot.command({
-name: "poll", 
-code: `$title[**Nieuwe Poll**]
-$thumbnail[https://media.discordapp.net/attachments/773126566414385166/780776833665728574/xKMXwBRme4gAAAABJRU5ErkJggg.png]
-$useChannel[731139570514526313]
-$description[$message]
-$footer[Poll geschreven door: $username#$discriminator[$authorID];$authorAvatar]
-$addReactions[🟢;🟠;🔴]
-$deletecommand
-$color[FFD700]
-$addTimestamp` 
-})
-
-bot.command({
 name: "poll", 
 code: `$title[Poll]
 $description[Je poll is met succes gestuurd naar <#731139570514526313>!]
 $footer[Poll met succes gecreëerd!;$authorAvatar]
-$color[3348a1]
+$color[FFD700]
 $addTimestamp` 
 })
 
@@ -685,11 +276,11 @@ $image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602
 bot.command({
 name: "play",
 aliases: ["p"],
-code: `$color[3348a1]
+code: `$color[FFD700]
 $thumbnail[$jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;thumbnail;]]
 $author[Nummer aan het afspelen;https://images.squarespace-cdn.com/content/v1/58eac4d88419c2d993e74f57/1491954929572-MII6RYJO4QRPZHRFNYAM/ke17ZwdGBToddI8pDm48kOyctPanBqSdf7WQMpY1FsRZw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZUJFbgE-7XRK3dMEBRBhUpyD4IQ_uEhoqbBUjTJFcqKvko9JlUzuVmtjr1UPhOA5qkTLSJODyitRxw8OQt1oetw/ITunes_12_logo.png]
-$description[Ik heb [**$jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;title;]**\\]($jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;url;]) toegevoegd aan de wachtrij!
-Huidig Nummer: [**$songInfo[title]**\\]($songInfo[url]) 
+$description[Ik heb [**$jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;title;]**]($jsonRequest[http://api.somecool.repl.co/yt-search?search=$message;url;]) toegevoegd aan de wachtrij!
+Huidig Nummer: [**$songInfo[title]**]($songInfo[url]) 
 Duur: **$replaceText[$replaceText[$parseDate[$multi[$songInfo[duration];1000];time];minutes;minuten];seconds;seconden]**]
 $footer[Wachtrij: $queueLength]
 $addCmdReactions[▶️]
@@ -705,7 +296,7 @@ code: `$reactionCollector[$splitText[1];everyone;1m;🔈,🔉,🔊;awaitReaction
 $textSplit[$sendMessage[{title:Volume 🔊} {description:Volume instellen 📻:
 1 - 🔈 50%
 2 - 🔉 100%
-3 - 🔊 150%}{color:3348a1}{footer:Volume instelligen opgevraagd door $username[$authorID].};yes]; ]
+3 - 🔊 150%}{color:FFD700}{footer:Volume instelligen opgevraagd door $username[$authorID].};yes]; ]
 $onlyIf[$voiceID!=;{color:RED} {description:Je zit niet in een VC!}]`
 }) 
 
@@ -769,7 +360,7 @@ $onlyIf[$queueLength>0;{color:RED} {description:De wachtrij is leeg!}]
 $title[Resume]
 $description[▶️ Nummer word weer afgespeeld. Huidig nummer: [**$songInfo[title]**\\]($songInfo[url])]
 $footer[Wachtrij: $queueLength]
-$color[3348a1]`
+$color[FFD700]`
 })
 
 bot.command({
@@ -786,7 +377,7 @@ name: "lb-levels",
 code:`$title[**XP Leaderboard**]
 $thumbnail[https://media.discordapp.net/attachments/773126566414385166/774262632835317780/image0.jpg]
 $description[$userLeaderboard[level;asc;{top}. {username} - level {value}]]
-$color[3348a1]
+$color[FFD700]
 $image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
 $addTimestamp`    
 })
@@ -800,7 +391,7 @@ $title[**Reset XP**]
 $description[Ik heb de xp van <@!$mentioned[1;yes]> gereset!]
 $footer[XP gereset door $username.;$authorAvatar]
 $image[https://cdn.discordapp.com/attachments/616315208251605005/616319462349602816/Tw.gif]
-$color[3348a1]
+$color[FFD700]
 $onlyPerms[` 
 })
 
@@ -811,7 +402,7 @@ $title[Ban]
 $description[
 **Je bent geband van $serverName[$guildID] door $username[$authorID]!
 Reden: $noMentionMessage**]
-$color[3348a1]
+$color[FFD700]
 $onlyPerms[admin;]` 
 })
 
@@ -1011,7 +602,7 @@ $onlyIf[$getChannelVar[user_message]!=undefinied;{description: I was not able to
 bot.command({
 name: "loop",
 code: `$description[Loop Queue staat nu $replaceText[$replaceText[$loopQueue;true;**aan**];false;**uit**]]
-$color[3348a1]
+$color[FFD700]
 $addCmdReactions[🔁]
 $footer[Wachtrij: $queueLength]
 $onlyIf[$voiceID!=;{color:RED} {description:Je zit niet in een VC!}]
@@ -1037,7 +628,7 @@ code: `$addReactions[▶️]
 $author[Playlist toegevoegd aan de wachtrij;https://media.discordapp.net/attachments/785506848638763039/796380262233145354/image0.png]
 $description[**Ik heb $playSpotify[$message;number;{color:RED} {description:Er ging iets fout. Probeer het later opnieuw.} toegevoegd aan de wachtrij!]]
 $footer[Wachtrij: $queueLength]
-$color[3348a1]
+$color[FFD700]
 $onlyIf[$voiceID!=;{color:RED} {description:Je zit niet in een VC!}]`
 })
 
@@ -1078,9 +669,8 @@ $onlyIf[$mentionedRoles[1]!=;Mention een role...]`
 })
 
 bot.command({
-        name: "lyrics-search",
-        code: `
-$title[Lyrics]
+name: "lyrics-search",
+code: `$title[Lyrics]
 $description[$jsonRequest[https://some-random-api.ml/lyrics?title=$replaceText[$message; ;+];lyrics;Geen lyrics gevonden voor dit nummer.]]
 $footer[Lyrics opgevraagd door $username#$discriminator[$authorID]]
 $color[RANDOM]`
@@ -1161,7 +751,7 @@ $setServerVar[levels_channel;$mentionedChannels[1;yes]]
 $title[Levels Channel]
 $description[Voortaan worden Level-Up messages gestuurd naar <#$mentionedChannels[1;yes]>!]
 $footer[Ingesteld door $username[$authorID]]
-$color[3348a1]
+$color[FFD700]
 $onlyIf[$channelExists[$mentionedChannels[1]]==true;Dat is geen geldige channel!]
 $onlyForIDs[236588847176220672;428272829553967106;Je hebt geen rechten om deze command uit te voeren!]`
 })
@@ -1170,14 +760,15 @@ bot.command({
 name: "weather",
 aliases: ["weer"],
 code: `$thumbnail[https://media.discordapp.net/attachments/785506848638763039/786885629274488832/image0.png]
-$title[Het weer in **$message**]
+$title[Het weer in **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;location;]**]
 $description[Locatie: **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;location;]**
 Temperatuur: **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;temperature;]**
 Luchtvochtigheid: **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;humidity;]%**
 Windsnelheid: **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;wind_speed;]**
 Windrichting: **$jsonRequest[http://api.somecool.repl.co/weather?place=$message;wind_display;]**]
 $argsCheck[>1;❌ Geef een locatie!]
-$color[FFD700]`
+$color[FFD700]
+$botTyping`
 })
 
 bot.command({
@@ -1228,7 +819,7 @@ name: "quote",
 code: `$author[$userTag[$getMessage[$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[6]];false;$mentionedChannels[1;yes]];$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[7]];false;$noMentionMessage];userID]];$userAvatar[$getMessage[$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[6]];false;$mentionedChannels[1;yes]];$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[7]];false;$noMentionMessage];userID]]]
 $description[$getMessage[$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[6]];false;$mentionedChannels[1;yes]];$replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$splitText[7]];false;$noMentionMessage];content]
 
-[Originele message\\]($replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$message];false;https://discord.com/channels/$guildID/$mentionedChannels[1;yes]/$noMentionMessage])]
+[Originele message]($replaceText[$replaceText[$checkContains[$message;https://discord.com/channels/;https://ptb.discord.com/channels/];true;$message];false;https://discord.com/channels/$guildID/$mentionedChannels[1;yes]/$noMentionMessage])]
 $textSplit[$message;/]
 $color[RANDOM]
 $suppressErrors[{color:RED} {title:Error} {description:Ik kon het bericht niet vinden.}]`
@@ -1593,8 +1184,29 @@ $onlyPerms[admin;{color:RED} {description:Je hebt geen rechten om deze command u
 bot.command({
 name: "$alwaysExecute",
 nonPrefixed: true,
-code: `$reply[$messageID;Goedemorgen <@!$authorID>! $customEmoji[peepohey];yes]
-$onlyIf[$checkContains[$toLowercase[$message];gm;mogguh;goedemorgen;goeiemorgen]==true]`
+code: `
+$if[$hour<12]
+$reply[$messageID;Goedemorgen <@!$authorID>! $customEmoji[peepohey];yes]
+$elseIf[$hour>=12]
+$reply[$messageID;Goedemiddag <@!$authorID>! $customEmoji[peepohey];yes]
+$endelseIf
+$endif
+$timezone[Europe/Amsterdam]
+$onlyIf[$checkContains[$toLowercase[$message];gm;mogguh;goedemorgen;goeiemorgen;goedemiddag;goeiemiddag]==true]`
+})
+
+bot.command({
+name: "$alwaysExecute",
+nonPrefixed: true,
+code: `$reply[$messageID;Welterusten <@!$authorID>! $customEmoji[peepoSleep] $customEmoji[peepoHey];yes]
+$onlyIf[$checkContains[$toLowercase[$message];gn;welterusten;truste;welteruste]==true]`
+})
+
+bot.command({
+name: "$alwaysExecute",
+nonPrefixed: true,
+code: `$reply[$messageID;Goedenavond <@!$authorID>! $customEmoji[peepoHey];yes]
+$onlyIf[$checkContains[$toLowercase[$message];goeieavond;goedenavond;goedeavond]==true]`
 })
 
 bot.command({
@@ -1667,4 +1279,14 @@ $textSplit[$sendMessage[**$getUserVar[gems] $customEmoji[bsGem] worden gegeneree
 $wait[3s]
 `
 })
+
+//bot.command({
+  //name: '$alwaysExecute',
+  //code: `$if[$random[1;2000]==10]
+  //$endif
+ // `
+//})
+
+bot.loadCommands(`./commands/`)
+
 keepAlive()
